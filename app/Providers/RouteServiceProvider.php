@@ -28,14 +28,19 @@ class RouteServiceProvider extends ServiceProvider
     {
         $this->configureRateLimiting();
 
-        $this->routes(function () {
-            Route::middleware('api')
-                ->prefix('api')
-                ->group(base_path('routes/api.php'));
+        // Tenancy configuration https://tenancyforlaravel.com/docs/v3/quickstart#:~:text=before%20it%27s%20migrated.-,Central%20routes,-We%27ll%20make%20a
+        // $this->routes(function () {
+        //     Route::middleware('api')
+        //         ->prefix('api')
+        //         ->group(base_path('routes/api.php'));
 
-            Route::middleware('web')
-                ->group(base_path('routes/web.php'));
-        });
+        //     Route::middleware('web')
+        //         ->group(base_path('routes/web.php'));
+        // });
+
+        // Tenancy configuration https://tenancyforlaravel.com/docs/v3/quickstart#:~:text=before%20it%27s%20migrated.-,Central%20routes,-We%27ll%20make%20a
+        $this->mapWebRoutes();
+        $this->mapApiRoutes();
     }
 
     /**
@@ -48,5 +53,30 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
+    }
+
+    // Tenancy configurations https://tenancyforlaravel.com/docs/v3/quickstart#:~:text=before%20it%27s%20migrated.-,Central%20routes,-We%27ll%20make%20a
+    protected function mapWebRoutes()
+    {
+        foreach ($this->centralDomains() as $domain) {
+            Route::middleware('web')
+                ->domain($domain)
+                ->namespace($this->namespace)
+                ->group(base_path('routes/web.php'));
+        }
+    }
+    protected function mapApiRoutes()
+    {
+        foreach ($this->centralDomains() as $domain) {
+            Route::prefix('api')
+                ->domain($domain)
+                ->middleware('api')
+                ->namespace($this->namespace)
+                ->group(base_path('routes/api.php'));
+        }
+    }
+    protected function centralDomains(): array
+    {
+        return config('tenancy.central_domains');
     }
 }
