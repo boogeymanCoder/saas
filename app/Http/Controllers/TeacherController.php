@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Student;
+use App\Models\Teacher;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
-class StudentController extends Controller
+class TeacherController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,13 +18,14 @@ class StudentController extends Controller
      */
     public function index(Request $request)
     {
+
         $request->validate([
             "sort_column" =>
             "in:first_name,middle_name,last_name,address,birthday,gender,number,email",
             "sort_order" => "in:asc,desc",
         ]);
 
-        return QueryBuilder::for(Student::class)
+        return QueryBuilder::for(Teacher::class)
             ->allowedFilters(['first_name', "middle_name", "last_name", "address", "birthday", AllowedFilter::exact('gender'), "number", 'email'])
             ->defaultSort('first_name')
             ->allowedSorts(['first_name', "middle_name", "last_name", "address", "birthday", "number", 'email'])
@@ -50,9 +50,10 @@ class StudentController extends Controller
                     "gender" => "required||string|in:Male,Female",
                     "number" => "required|string",
                     "email" => "required|string",
+                    "password" => "required|string|confirmed",
                 ]
             );
-            return response(["success" => true, "data" => Student::create($request->all()), "errorMessage" => null], 201);
+            return response(["success" => true, "data" => Teacher::create($request->all()), "errorMessage" => null], 201);
         } catch (Exception $exception) {
             return response(["success" => false, "data" => null, "errorMessage" => $exception->getMessage()], 400);
         }
@@ -66,11 +67,11 @@ class StudentController extends Controller
      */
     public function show($id)
     {
-        $student = Student::find($id);
+        $teacher = Teacher::find($id);
 
-        if (!$student) return response(["success" => false, "data" => null, "errorMessage" => "Student not found."], 404);
+        if (!$teacher) return response(["success" => false, "data" => null, "errorMessage" => "Teacher not found."], 404);
 
-        return response(["success" => true, "data" => $student, "errorMessage" => null]);
+        return response(["success" => true, "data" => $teacher, "errorMessage" => null]);
     }
 
     /**
@@ -86,14 +87,15 @@ class StudentController extends Controller
             $request->validate(
                 [
                     "gender" => "string|in:Male,Female",
+                    "password" => "string|confirmed"
                 ]
             );
 
-            $student = Student::find($id);
-            if (!$student) return response(["success" => false, "data" => null, "errorMessage" => "Student not found."], 404);
+            $teacher = Teacher::find($id);
+            if (!$teacher) return response(["success" => false, "data" => null, "errorMessage" => "Teacher not found."], 404);
 
-            $student->update($request->all());
-            return response(["success" => true, "data" => $student, "errorMessage" => null]);
+            $teacher->update($request->all());
+            return response(["success" => true, "data" => $teacher, "errorMessage" => null]);
         } catch (Exception $exception) {
             return response(["success" => false, "data" => null, "errorMessage" => $exception->getMessage()], 400);
         }
@@ -107,8 +109,8 @@ class StudentController extends Controller
      */
     public function destroy($id)
     {
-        $student =  Student::destroy($id);
-        if (!$student) return response(["success" => false, "data" => null, "errorMessage" => "Student not found."], 404);
+        $teacher =  Teacher::destroy($id);
+        if (!$teacher) return response(["success" => false, "data" => null, "errorMessage" => "Teacher not found."], 404);
 
         return response(["success" => true, "data" => 1, "errorMessage" => null]);
     }
