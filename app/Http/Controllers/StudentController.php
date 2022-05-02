@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class StudentController extends Controller
 {
@@ -20,26 +24,11 @@ class StudentController extends Controller
             "sort_order" => "in:asc,desc",
         ]);
 
-        return Student::where([
-            ["first_name", "like", "%" . $request->get("first_name") . "%"],
-            ["middle_name", "like", "%" . $request->get("middle_name") . "%"],
-            ["last_name", "like", "%" . $request->get("last_name") . "%"],
-            ["address", "like", "%" . $request->get("address") . "%"],
-            ["birthday", "like", "%" . $request->get("birthday") . "%"],
-            ["gender", "like", "%" . $request->get("gender") . "%"],
-            ["number", "like", "%" . $request->get("number") . "%"],
-            ["email", "like", "%" . $request->get("email") . "%"],
-        ])
-            ->orderBy(
-                $request->get("sort_column") ?? "first_name",
-                $request->get("sort_order") ?? "asc"
-            )
-            ->paginate(
-                $request->get("pageSize"),
-                ["*"],
-                "current",
-                $request->get("current")
-            );
+        return QueryBuilder::for(Student::class)
+            ->allowedFilters(['first_name', "middle_name", "last_name", "address", "birthday", AllowedFilter::exact('gender'), "number", 'email'])
+            ->defaultSort('first_name')
+            ->allowedSorts(['first_name', "middle_name", "last_name", "address", "birthday", "number", 'email'])
+            ->jsonPaginate();
     }
 
     /**
@@ -52,17 +41,17 @@ class StudentController extends Controller
     {
         $request->validate(
             [
-                "first_name" => "required",
-                "last_name" => "required",
-                "address" => "required",
-                "birthday" => "required",
-                "gender" => "required|in:Male,Female",
-                "number" => "required",
-                "email" => "required",
+                "first_name" => "required|string",
+                "last_name" => "required|string",
+                "address" => "required|string",
+                "birthday" => "required|date",
+                "gender" => "required||string|in:Male,Female",
+                "number" => "required|string",
+                "email" => "required|string",
             ]
         );
 
-        return Student::create($request->all());
+        return response(Student::create($request->all()), 201);
     }
 
     /**
@@ -89,7 +78,7 @@ class StudentController extends Controller
     {
         $request->validate(
             [
-                "gender" => "required|in:Male,Female",
+                "gender" => "required|string|in:Male,Female",
             ]
         );
 
