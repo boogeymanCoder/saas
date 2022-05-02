@@ -39,19 +39,22 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate(
-            [
-                "first_name" => "required|string",
-                "last_name" => "required|string",
-                "address" => "required|string",
-                "birthday" => "required|date",
-                "gender" => "required||string|in:Male,Female",
-                "number" => "required|string",
-                "email" => "required|string",
-            ]
-        );
-
-        return response(Student::create($request->all()), 201);
+        try {
+            $request->validate(
+                [
+                    "first_name" => "required|string",
+                    "last_name" => "required|string",
+                    "address" => "required|string",
+                    "birthday" => "required|date",
+                    "gender" => "required||string|in:Male,Female",
+                    "number" => "required|string",
+                    "email" => "required|string",
+                ]
+            );
+            return response(["success" => true, "data" => Student::create($request->all()), "errorMessage" => null], 201);
+        } catch (Exception $exception) {
+            return response(["success" => false, "data" => null, "errorMessage" => $exception->getMessage()], 400);
+        }
     }
 
     /**
@@ -64,7 +67,9 @@ class StudentController extends Controller
     {
         $student = Student::find($id);
 
-        return $student;
+        if (!$student) return response(["success" => false, "data" => null, "errorMessage" => "Student not found."], 404);
+
+        return response(["success" => true, "data" => $student, "errorMessage" => null]);
     }
 
     /**
@@ -83,9 +88,10 @@ class StudentController extends Controller
         );
 
         $student = Student::find($id);
+        if (!$student) return response(["success" => false, "data" => null, "errorMessage" => "Student not found."], 404);
 
         $student->update($request->all());
-        return $student;
+        return response(["success" => true, "data" => $student, "errorMessage" => null]);
     }
 
     /**
@@ -96,6 +102,9 @@ class StudentController extends Controller
      */
     public function destroy($id)
     {
-        return Student::destroy($id);
+        $student =  Student::destroy($id);
+        if (!$student) return response(["success" => false, "data" => null, "errorMessage" => "Student not found."], 404);
+
+        return response(["success" => true, "data" => 1, "errorMessage" => null]);
     }
 }
