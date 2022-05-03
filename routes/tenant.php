@@ -46,7 +46,7 @@ Route::middleware([
 
     Route::resource("students", StudentController::class);
     Route::resource("teachers", TeacherController::class);
-    // TODO /teachers/classes
+    Route::get('/teachers/{id}/classrooms', [TeacherController::class, "classrooms"]);
     Route::resource("subjects", SubjectController::class);
     Route::resource("classrooms", ClassroomController::class);
     Route::get('/classrooms/{id}/students', [ClassroomController::class, "students"]);

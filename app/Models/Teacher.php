@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Classroom;
 
 class Teacher extends Model
 {
@@ -30,4 +31,9 @@ class Teacher extends Model
     protected $hidden = [
         'password',
     ];
+
+    public function classrooms()
+    {
+        return $this->hasMany(Classroom::class);
+    }
 }

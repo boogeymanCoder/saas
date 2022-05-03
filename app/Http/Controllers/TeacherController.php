@@ -67,6 +67,26 @@ class TeacherController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function classrooms($id)
+    {
+        $teacher = Teacher::find($id);
+        $classrooms = QueryBuilder::for($teacher->classrooms())
+            ->allowedFilters(['name', "code"])
+            ->defaultSort('name')
+            ->allowedSorts(['name', "code",])
+            ->jsonPaginate();
+
+        if (!$teacher) return response(["success" => false, "data" => null, "errorMessage" => "Teacher not found."], 404);
+
+        return response(["success" => true, "data" => $classrooms, "errorMessage" => null]);
+    }
+
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
