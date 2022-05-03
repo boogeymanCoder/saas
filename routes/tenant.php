@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\ClassroomController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -44,5 +45,7 @@ Route::middleware([
 
     Route::resource("students", StudentController::class);
     Route::resource("teachers", TeacherController::class);
+    // TODO /teachers/classes
     Route::resource("subjects", SubjectController::class);
+    Route::resource("classrooms", ClassroomController::class);
 });
