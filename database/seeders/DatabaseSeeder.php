@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Classroom;
+use App\Models\GradingSystemCategory;
 use App\Models\Student;
 use App\Models\Subject;
 use App\Models\Teacher;
@@ -24,17 +25,15 @@ class DatabaseSeeder extends Seeder
         Subject::factory(100)->create();
         Classroom::factory(100)->create();
 
-
-        // $student = Student::find(1);
-        // $student->classrooms()->attach(1);
-
+        // populating classroom - subject relationship
         $students = Student::all();
-
         // Populate the pivot table
         Classroom::all()->each(function ($classroom) use ($students) {
             $classroom->students()->attach(
                 $students->random(30)->pluck('id')
             );
         });
+
+        GradingSystemCategory::factory(100)->create();
     }
 }

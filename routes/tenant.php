@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\ClassroomController;
+use App\Http\Controllers\GradingSystemCategoryController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -50,4 +51,5 @@ Route::middleware([
     Route::resource("classrooms", ClassroomController::class);
     Route::get('/classrooms/{id}/students', [ClassroomController::class, "students"]);
     Route::delete('/classrooms/{id}/students/{student_id}', [ClassroomController::class, "removeStudent"]);
+    Route::resource("gs_categories", GradingSystemCategoryController::class);
 });
