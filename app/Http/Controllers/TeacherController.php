@@ -13,18 +13,10 @@ class TeacherController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-
-        $request->validate([
-            "sort_column" =>
-            "in:first_name,middle_name,last_name,address,birthday,gender,number,email",
-            "sort_order" => "in:asc,desc",
-        ]);
-
         return QueryBuilder::for(Teacher::class)
             ->allowedFilters(['first_name', "middle_name", "last_name", "address", "birthday", AllowedFilter::exact('gender'), "number", 'email'])
             ->defaultSort('first_name')

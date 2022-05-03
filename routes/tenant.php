@@ -7,6 +7,7 @@ use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 
 /*
@@ -43,4 +44,5 @@ Route::middleware([
 
     Route::resource("students", StudentController::class);
     Route::resource("teachers", TeacherController::class);
+    Route::resource("subjects", SubjectController::class);
 });

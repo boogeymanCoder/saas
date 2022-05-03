@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Student;
+use App\Models\Subject;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
-class StudentController extends Controller
+class SubjectController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,10 +17,10 @@ class StudentController extends Controller
      */
     public function index()
     {
-        return QueryBuilder::for(Student::class)
-            ->allowedFilters(['first_name', "middle_name", "last_name", "address", "birthday", AllowedFilter::exact('gender'), "number", 'email'])
-            ->defaultSort('first_name')
-            ->allowedSorts(['first_name', "middle_name", "last_name", "address", "birthday", "number", 'email'])
+        return QueryBuilder::for(Subject::class)
+            ->allowedFilters(['name', "code"])
+            ->defaultSort('name')
+            ->allowedSorts(['name', "code",])
             ->jsonPaginate();
     }
 
@@ -36,16 +35,11 @@ class StudentController extends Controller
         try {
             $request->validate(
                 [
-                    "first_name" => "required|string",
-                    "last_name" => "required|string",
-                    "address" => "required|string",
-                    "birthday" => "required|date",
-                    "gender" => "required||string|in:Male,Female",
-                    "number" => "required|string",
-                    "email" => "required|string",
+                    "name" => "required|string|unique:subjects,name",
+                    "code" => "required|string|unique:subjects,code",
                 ]
             );
-            return response(["success" => true, "data" => Student::create($request->all()), "errorMessage" => null], 201);
+            return response(["success" => true, "data" => Subject::create($request->all()), "errorMessage" => null], 201);
         } catch (Exception $exception) {
             return response(["success" => false, "data" => null, "errorMessage" => $exception->getMessage()], 400);
         }
@@ -59,11 +53,12 @@ class StudentController extends Controller
      */
     public function show($id)
     {
-        $student = Student::find($id);
 
-        if (!$student) return response(["success" => false, "data" => null, "errorMessage" => "Student not found."], 404);
+        $subject = Subject::find($id);
 
-        return response(["success" => true, "data" => $student, "errorMessage" => null]);
+        if (!$subject) return response(["success" => false, "data" => null, "errorMessage" => "Subject not found."], 404);
+
+        return response(["success" => true, "data" => $subject, "errorMessage" => null]);
     }
 
     /**
@@ -78,15 +73,17 @@ class StudentController extends Controller
         try {
             $request->validate(
                 [
-                    "gender" => "string|in:Male,Female",
+                    "name" => "string|unique:subjects,name," . $id,
+                    "code" => "string|unique:subjects,code," . $id,
                 ]
             );
 
-            $student = Student::find($id);
-            if (!$student) return response(["success" => false, "data" => null, "errorMessage" => "Student not found."], 404);
+            $subject = Subject::find($id);
 
-            $student->update($request->all());
-            return response(["success" => true, "data" => $student, "errorMessage" => null]);
+            if (!$subject) return response(["success" => false, "data" => null, "errorMessage" => "Subject not found."], 404);
+
+            $subject->update($request->all());
+            return response(["success" => true, "data" => $subject, "errorMessage" => null]);
         } catch (Exception $exception) {
             return response(["success" => false, "data" => null, "errorMessage" => $exception->getMessage()], 400);
         }
@@ -100,8 +97,8 @@ class StudentController extends Controller
      */
     public function destroy($id)
     {
-        $student =  Student::destroy($id);
-        if (!$student) return response(["success" => false, "data" => null, "errorMessage" => "Student not found."], 404);
+        $subject =  Subject::destroy($id);
+        if (!$subject) return response(["success" => false, "data" => null, "errorMessage" => "Subject not found."], 404);
 
         return response(["success" => true, "data" => 1, "errorMessage" => null]);
     }
