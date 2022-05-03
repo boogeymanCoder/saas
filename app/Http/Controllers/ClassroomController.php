@@ -6,6 +6,7 @@ use App\Models\Classroom;
 use App\Models\Teacher;
 use Exception;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ClassroomController extends Controller
@@ -61,6 +62,50 @@ class ClassroomController extends Controller
         if (!$classroom) return response(["success" => false, "data" => null, "errorMessage" => "Classroom not found."], 404);
 
         return response(["success" => true, "data" => $classroom, "errorMessage" => null]);
+    }
+
+    /**
+     * Display the students of this classroom.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function students($id)
+    {
+        $classroom = Classroom::find($id);
+        $students = QueryBuilder::for($classroom->students())
+            ->allowedFilters(['first_name', "middle_name", "last_name", "address", "birthday", AllowedFilter::exact('gender'), "number", 'email'])
+            ->defaultSort('first_name')
+            ->allowedSorts(['first_name', "middle_name", "last_name", "address", "birthday", "number", 'email'])
+            ->jsonPaginate();
+
+
+        if (!$classroom) return response(["success" => false, "data" => null, "errorMessage" => "Classroom not found."], 404);
+
+        foreach ($classroom->students as $student) {
+            echo $student->pivot->created_at;
+        }
+
+        return response(["success" => true, "data" => $students, "errorMessage" => null]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function removeStudent($id, $student_id)
+    {
+        $classroom =  Classroom::find($id);
+        if (!$classroom) return response(["success" => false, "data" => null, "errorMessage" => "Classroom not found."], 404);
+
+        $student = $classroom->students()->find($student_id);
+        if (!$student) return response(["success" => false, "data" => null, "errorMessage" => "Student not found on classroom."], 404);
+
+        $classroom->students()->detach($student_id);
+
+        return response(["success" => true, "data" => 1, "errorMessage" => null]);
     }
 
     /**

@@ -23,5 +23,18 @@ class DatabaseSeeder extends Seeder
         Teacher::factory(100)->create();
         Subject::factory(100)->create();
         Classroom::factory(100)->create();
+
+
+        // $student = Student::find(1);
+        // $student->classrooms()->attach(1);
+
+        $students = Student::all();
+
+        // Populate the pivot table
+        Classroom::all()->each(function ($classroom) use ($students) {
+            $classroom->students()->attach(
+                $students->random(30)->pluck('id')
+            );
+        });
     }
 }

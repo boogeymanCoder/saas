@@ -48,4 +48,6 @@ Route::middleware([
     // TODO /teachers/classes
     Route::resource("subjects", SubjectController::class);
     Route::resource("classrooms", ClassroomController::class);
+    Route::get('/classrooms/{id}/students', [ClassroomController::class, "students"]);
+    Route::delete('/classrooms/{id}/students/{student_id}', [ClassroomController::class, "removeStudent"]);
 });
