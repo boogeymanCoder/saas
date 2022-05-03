@@ -13,12 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('grading_system_categories', function (Blueprint $table) {
+        Schema::create('grading_systems', function (Blueprint $table) {
             $table->id();
             $table->string("name");
-            $table->decimal("percentage");
-            $table->unsignedBigInteger('grading_system_id');
-            $table->foreign('grading_system_id')->references('id')->on('grading_systems');
             $table->timestamps();
         });
     }
@@ -30,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('grading_system_categories');
+        Schema::dropIfExists('grading_systems');
     }
 };

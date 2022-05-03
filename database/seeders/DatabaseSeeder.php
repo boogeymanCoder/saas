@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Classroom;
+use App\Models\GradingSystem;
 use App\Models\GradingSystemCategory;
 use App\Models\Student;
 use App\Models\Subject;
@@ -34,6 +35,7 @@ class DatabaseSeeder extends Seeder
             );
         });
 
+        GradingSystem::factory(100)->create();
         GradingSystemCategory::factory(100)->create();
     }
 }

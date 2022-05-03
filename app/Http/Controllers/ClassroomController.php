@@ -73,14 +73,12 @@ class ClassroomController extends Controller
     public function students($id)
     {
         $classroom = Classroom::find($id);
+        if (!$classroom) return response(["success" => false, "data" => null, "errorMessage" => "Classroom not found."], 404);
         $students = QueryBuilder::for($classroom->students())
             ->allowedFilters(['first_name', "middle_name", "last_name", "address", "birthday", AllowedFilter::exact('gender'), "number", 'email'])
             ->defaultSort('first_name')
             ->allowedSorts(['first_name', "middle_name", "last_name", "address", "birthday", "number", 'email'])
             ->jsonPaginate();
-
-
-        if (!$classroom) return response(["success" => false, "data" => null, "errorMessage" => "Classroom not found."], 404);
 
         foreach ($classroom->students as $student) {
             echo $student->pivot->created_at;

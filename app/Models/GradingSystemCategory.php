@@ -11,6 +11,12 @@ class GradingSystemCategory extends Model
 
     protected $fillable = [
         "name",
-        "percentage"
+        "percentage",
+        "grading_system_id"
     ];
+
+    public function grading_system()
+    {
+        return $this->belongsTo(GradingSystemCategory::class);
+    }
 }

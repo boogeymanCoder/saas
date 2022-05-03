@@ -75,13 +75,14 @@ class TeacherController extends Controller
     public function classrooms($id)
     {
         $teacher = Teacher::find($id);
+        if (!$teacher) return response(["success" => false, "data" => null, "errorMessage" => "Teacher not found."], 404);
+
         $classrooms = QueryBuilder::for($teacher->classrooms())
             ->allowedFilters(['name', "code"])
             ->defaultSort('name')
             ->allowedSorts(['name', "code",])
             ->jsonPaginate();
 
-        if (!$teacher) return response(["success" => false, "data" => null, "errorMessage" => "Teacher not found."], 404);
 
         return response(["success" => true, "data" => $classrooms, "errorMessage" => null]);
     }

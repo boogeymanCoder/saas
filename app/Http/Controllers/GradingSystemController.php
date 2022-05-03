@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\GradingSystemCategory;
+use App\Models\GradingSystem;
 use Exception;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 
-class GradingSystemCategoryController extends Controller
+class GradingSystemController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,10 +16,10 @@ class GradingSystemCategoryController extends Controller
      */
     public function index()
     {
-        return QueryBuilder::for(GradingSystemCategory::class)
-            ->allowedFilters(['name'])
+        return QueryBuilder::for(GradingSystem::class)
+            ->allowedFilters(['name',])
             ->defaultSort('name')
-            ->allowedSorts(["name", "percentage"])
+            ->allowedSorts(['name',])
             ->jsonPaginate();
     }
 
@@ -34,12 +34,10 @@ class GradingSystemCategoryController extends Controller
         try {
             $request->validate(
                 [
-                    "name" => "required|string",
-                    "percentage" => "required|numeric",
-                    "grading_system_id" => "required|exists:grading_system,id",
+                    "name" => "required|string|unique:grading_systems,name",
                 ]
             );
-            return response(["success" => true, "data" => GradingSystemCategory::create($request->all()), "errorMessage" => null], 201);
+            return response(["success" => true, "data" => GradingSystem::create($request->all()), "errorMessage" => null], 201);
         } catch (Exception $exception) {
             return response(["success" => false, "data" => null, "errorMessage" => $exception->getMessage()], 400);
         }
@@ -53,11 +51,11 @@ class GradingSystemCategoryController extends Controller
      */
     public function show($id)
     {
-        $grading_system_category = GradingSystemCategory::find($id);
+        $grading_system = GradingSystem::find($id);
 
-        if (!$grading_system_category) return response(["success" => false, "data" => null, "errorMessage" => "Grading System Category not found."], 404);
+        if (!$grading_system) return response(["success" => false, "data" => null, "errorMessage" => "Grading System not found."], 404);
 
-        return response(["success" => true, "data" => $grading_system_category, "errorMessage" => null]);
+        return response(["success" => true, "data" => $grading_system, "errorMessage" => null]);
     }
 
     /**
@@ -72,18 +70,16 @@ class GradingSystemCategoryController extends Controller
         try {
             $request->validate(
                 [
-                    "name" => "string|unique:grading_system_categories,name," . $id,
-                    "percentage" => "string",
+                    "name" => "string|unique:grading_systems,name," . $id,
                 ]
             );
 
-            $grading_system_category = GradingSystemCategory::find($id);
+            $grading_system = GradingSystem::find($id);
 
-            if (!$grading_system_category) return response(["success" => false, "data" => null, "errorMessage" => "Grading System Category not found."], 404);
+            if (!$grading_system) return response(["success" => false, "data" => null, "errorMessage" => "Grading System not found."], 404);
 
-
-            $grading_system_category->update($request->all());
-            return response(["success" => true, "data" => $grading_system_category, "errorMessage" => null]);
+            $grading_system->update($request->all());
+            return response(["success" => true, "data" => $grading_system, "errorMessage" => null]);
         } catch (Exception $exception) {
             return response(["success" => false, "data" => null, "errorMessage" => $exception->getMessage()], 400);
         }
@@ -97,8 +93,8 @@ class GradingSystemCategoryController extends Controller
      */
     public function destroy($id)
     {
-        $grading_system_category =  GradingSystemCategory::destroy($id);
-        if (!$grading_system_category) return response(["success" => false, "data" => null, "errorMessage" => "Grading System Category not found."], 404);
+        $grading_system =  GradingSystem::destroy($id);
+        if (!$grading_system) return response(["success" => false, "data" => null, "errorMessage" => "Grading System not found."], 404);
 
         return response(["success" => true, "data" => 1, "errorMessage" => null]);
     }
