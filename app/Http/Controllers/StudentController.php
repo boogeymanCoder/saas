@@ -66,6 +66,31 @@ class StudentController extends Controller
         return response(["success" => true, "data" => $student, "errorMessage" => null]);
     }
 
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function classrooms($id)
+    {
+        $student = Student::find($id);
+        $classrooms = QueryBuilder::for($student->classrooms())
+            ->allowedFilters(['name', "code"])
+            ->defaultSort('name')
+            ->allowedSorts(['name', "code",])
+            ->jsonPaginate();
+
+        if (!$student) return response(["success" => false, "data" => null, "errorMessage" => "Student not found."], 404);
+
+        foreach ($student->classrooms as $classroom) {
+            echo $classroom->pivot->created_at;
+        }
+
+        return response(["success" => true, "data" => $classrooms, "errorMessage" => null]);
+    }
+
     /**
      * Update the specified resource in storage.
      *

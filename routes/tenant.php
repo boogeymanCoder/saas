@@ -45,6 +45,7 @@ Route::middleware([
     });
 
     Route::resource("students", StudentController::class);
+    Route::get('/students/{id}/classrooms', [StudentController::class, "classrooms"]);
     Route::resource("teachers", TeacherController::class);
     Route::get('/teachers/{id}/classrooms', [TeacherController::class, "classrooms"]);
     Route::resource("subjects", SubjectController::class);
