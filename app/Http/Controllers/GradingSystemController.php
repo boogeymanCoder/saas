@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\GradingSystem;
+use App\Models\GradingSystemCategory;
 use Exception;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -116,6 +117,25 @@ class GradingSystemController extends Controller
     {
         $grading_system =  GradingSystem::destroy($id);
         if (!$grading_system) return response(["success" => false, "data" => null, "errorMessage" => "Grading System not found."], 404);
+
+        return response(["success" => true, "data" => 1, "errorMessage" => null]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function removeGradingSystemCategory($id, $gs_category_id)
+    {
+        $grading_system =  GradingSystem::find($id);
+        if (!$grading_system) return response(["success" => false, "data" => null, "errorMessage" => "Grading System not found."], 404);
+
+        $grading_system_category =  $grading_system->grading_system_categories()->find($gs_category_id);
+        if (!$grading_system_category) return response(["success" => false, "data" => null, "errorMessage" => "Grading System Category not in Grading System."], 404);
+
+        GradingSystemCategory::destroy($gs_category_id);
 
         return response(["success" => true, "data" => 1, "errorMessage" => null]);
     }
