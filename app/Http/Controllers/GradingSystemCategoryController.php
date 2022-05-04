@@ -53,7 +53,7 @@ class GradingSystemCategoryController extends Controller
      */
     public function show($id)
     {
-        $grading_system_category = GradingSystemCategory::find($id);
+        $grading_system_category = GradingSystemCategory::with("grading_system")->find($id);
 
         if (!$grading_system_category) return response(["success" => false, "data" => null, "errorMessage" => "Grading System Category not found."], 404);
 

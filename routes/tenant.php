@@ -47,18 +47,23 @@ Route::middleware([
 
     Route::resource("students", StudentController::class);
     Route::get('/students/{id}/classrooms', [StudentController::class, "classrooms"]);
+
     Route::resource("teachers", TeacherController::class);
     Route::get('/teachers/{id}/classrooms', [TeacherController::class, "classrooms"]);
+
     Route::resource("subjects", SubjectController::class);
     Route::get('/subjects/{id}/classrooms', [SubjectController::class, "classrooms"]);
+
     Route::resource("classrooms", ClassroomController::class);
     Route::get('/classrooms/{id}/students', [ClassroomController::class, "students"]);
     Route::delete('/classrooms/{id}/students/{student_id}', [ClassroomController::class, "removeStudent"]);
     Route::put('/classrooms/{id}/students/{student_id}', [ClassroomController::class, "addStudent"]);
     Route::put('/classrooms/{id}/teacher/{teacher_id}', [ClassroomController::class, "updateTeacher"]);
-    // TODO GET /grading_systems/{id}/gs_categories
+
+    Route::resource("gs_categories", GradingSystemCategoryController::class);
+
+    Route::resource("grading_systems", GradingSystemController::class);
+    Route::get('/grading_systems/{id}/gs_categories', [GradingSystemController::class, "grading_system_categories"]);
     // TODO PUT /grading_systems/{id}/gs_categories
     // TODO DELETE /grading_systems/{id}/gs_categories
-    Route::resource("gs_categories", GradingSystemCategoryController::class);
-    Route::resource("grading_systems", GradingSystemController::class);
 });

@@ -17,6 +17,6 @@ class GradingSystemCategory extends Model
 
     public function grading_system()
     {
-        return $this->belongsTo(GradingSystemCategory::class);
+        return $this->belongsTo(GradingSystem::class);
     }
 }

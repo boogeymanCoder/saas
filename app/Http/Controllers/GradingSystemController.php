@@ -59,6 +59,27 @@ class GradingSystemController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function grading_system_categories($id)
+    {
+        $grading_system = GradingSystem::find($id);
+        if (!$grading_system) return response(["success" => false, "data" => null, "errorMessage" => "Grading System not found."], 404);
+
+
+        $grading_system_categories = QueryBuilder::for($grading_system->grading_system_categories())
+            ->allowedFilters(['name'])
+            ->defaultSort('name')
+            ->allowedSorts(["name", "percentage"])
+            ->jsonPaginate();
+
+        return response($grading_system_categories);
+    }
+
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
