@@ -62,6 +62,27 @@ class SubjectController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function classrooms($id)
+    {
+        $subject = Subject::find($id);
+
+        if (!$subject) return response(["success" => false, "data" => null, "errorMessage" => "Subject not found."], 404);
+
+        $classrooms = QueryBuilder::for($subject->classrooms())
+            ->allowedFilters(['name', "code"])
+            ->defaultSort('name')
+            ->allowedSorts(['name', "code",])
+            ->jsonPaginate();
+
+        return response($classrooms);
+    }
+
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
