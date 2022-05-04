@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Classroom;
+use App\Models\Student;
 use App\Models\Teacher;
 use Exception;
 use Illuminate\Http\Request;
@@ -132,6 +133,27 @@ class ClassroomController extends Controller
         } catch (Exception $exception) {
             return response(["success" => false, "data" => null, "errorMessage" => $exception->getMessage()], 400);
         }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function addStudent($id, $student_id)
+    {
+        $classroom =  Classroom::find($id);
+        $student =  Student::find($student_id);
+        if (!$classroom) return response(["success" => false, "data" => null, "errorMessage" => "Classroom not found."], 404);
+        if (!$student) return response(["success" => false, "data" => null, "errorMessage" => "Classroom not found."], 404);
+
+        $student_exists = $classroom->students()->find($student_id);
+        if ($student_exists) return response(["success" => false, "data" => null, "errorMessage" => "Student already inside the Classroom."], 400);
+
+        $classroom->students()->attach($student);
+
+        return response(["success" => true, "data" => 1, "errorMessage" => null]);
     }
 
     /**

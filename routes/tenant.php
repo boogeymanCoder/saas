@@ -53,12 +53,12 @@ Route::middleware([
     Route::resource("classrooms", ClassroomController::class);
     Route::get('/classrooms/{id}/students', [ClassroomController::class, "students"]);
     Route::delete('/classrooms/{id}/students/{student_id}', [ClassroomController::class, "removeStudent"]);
+    Route::put('/classrooms/{id}/students/{student_id}', [ClassroomController::class, "addStudent"]);
+    // TODO DELETE /classrooms/{id}/teacher
+    // TODO PUT /classrooms/{id}/teacher/{teacher_id}
     // TODO GET /grading_systems/{id}/gs_categories
     // TODO PUT /grading_systems/{id}/gs_categories
     // TODO DELETE /grading_systems/{id}/gs_categories
-    // TODO PUT /classrooms/{id}/students/{student_id}
-    // TODO DELETE /classrooms/{id}/teacher
-    // TODO PUT /classrooms/{id}/teacher/{teacher_id}
     Route::resource("gs_categories", GradingSystemCategoryController::class);
     Route::resource("grading_systems", GradingSystemController::class);
 });
