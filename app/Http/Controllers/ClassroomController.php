@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Classroom;
 use App\Models\Student;
+use App\Models\Subject;
 use App\Models\Teacher;
 use Exception;
 use Illuminate\Http\Request;
@@ -193,6 +194,29 @@ class ClassroomController extends Controller
 
         $classroom->teacher()->dissociate($classroom->teacher->id);
         $classroom->teacher()->associate($teacher->id);
+        $classroom->save();
+
+        // return response(["success" => true, "data" => 1, "errorMessage" => null]);
+        return response(["success" => true, "data" => $classroom, "errorMessage" => null]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @param  int  $teacher_id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateSubject($id, $subject_id)
+    {
+        $classroom =  Classroom::find($id);
+        if (!$classroom) return response(["success" => false, "data" => null, "errorMessage" => "Classroom not found."], 404);
+
+        $subject = Subject::find($subject_id);
+        if (!$subject) return response(["success" => false, "data" => null, "errorMessage" => "Subject not found."], 404);
+
+        $classroom->subject()->dissociate($classroom->subject->id);
+        $classroom->subject()->associate($subject->id);
         $classroom->save();
 
         // return response(["success" => true, "data" => 1, "errorMessage" => null]);
