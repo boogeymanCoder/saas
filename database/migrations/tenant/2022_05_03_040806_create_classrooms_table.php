@@ -18,9 +18,9 @@ return new class extends Migration
             $table->string("name");
             $table->string("code");
             $table->unsignedBigInteger('teacher_id');
-            $table->foreign('teacher_id')->references('id')->on('teachers');
+            $table->foreign('teacher_id')->references('id')->on('teachers')->onDelete("restrict");
             $table->unsignedBigInteger('subject_id');
-            $table->foreign('subject_id')->references('id')->on('subjects');
+            $table->foreign('subject_id')->references('id')->on('subjects')->onDelete("restrict");
             $table->timestamps();
         });
     }

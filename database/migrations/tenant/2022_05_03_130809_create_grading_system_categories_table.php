@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string("name");
             $table->decimal("percentage");
             $table->unsignedBigInteger('grading_system_id');
-            $table->foreign('grading_system_id')->references('id')->on('grading_systems');
+            $table->foreign('grading_system_id')->references('id')->on('grading_systems')->onDelete("cascade");
             $table->timestamps();
         });
     }
