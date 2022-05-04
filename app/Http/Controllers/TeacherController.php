@@ -84,7 +84,7 @@ class TeacherController extends Controller
             ->jsonPaginate();
 
 
-        return response(["success" => true, "data" => $classrooms, "errorMessage" => null]);
+        return response($classrooms);
     }
 
     /**

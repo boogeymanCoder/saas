@@ -84,9 +84,7 @@ class ClassroomController extends Controller
         foreach ($classroom->students as $student) {
             echo $student->pivot->created_at;
         }
-
-        // TODO data response was at data.data replace all relationship query 
-        return response(["success" => true, "data" => $students, "errorMessage" => null]);
+        return response($students);
     }
 
     /**

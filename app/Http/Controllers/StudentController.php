@@ -88,7 +88,7 @@ class StudentController extends Controller
             echo $classroom->pivot->created_at;
         }
 
-        return response(["success" => true, "data" => $classrooms, "errorMessage" => null]);
+        return response($classrooms);
     }
 
     /**
