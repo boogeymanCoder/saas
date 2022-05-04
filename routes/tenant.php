@@ -54,8 +54,8 @@ Route::middleware([
     Route::get('/classrooms/{id}/students', [ClassroomController::class, "students"]);
     Route::delete('/classrooms/{id}/students/{student_id}', [ClassroomController::class, "removeStudent"]);
     Route::put('/classrooms/{id}/students/{student_id}', [ClassroomController::class, "addStudent"]);
-    // TODO DELETE /classrooms/{id}/teacher
-    // TODO PUT /classrooms/{id}/teacher/{teacher_id}
+    Route::put('/classrooms/{id}/teacher/{teacher_id}', [ClassroomController::class, "updateTeacher"]);
+    // TODO GET /subject/{id}/classrooms
     // TODO GET /grading_systems/{id}/gs_categories
     // TODO PUT /grading_systems/{id}/gs_categories
     // TODO DELETE /grading_systems/{id}/gs_categories

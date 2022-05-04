@@ -85,26 +85,8 @@ class ClassroomController extends Controller
             echo $student->pivot->created_at;
         }
 
+        // TODO data response was at data.data replace all relationship query 
         return response(["success" => true, "data" => $students, "errorMessage" => null]);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function removeStudent($id, $student_id)
-    {
-        $classroom =  Classroom::find($id);
-        if (!$classroom) return response(["success" => false, "data" => null, "errorMessage" => "Classroom not found."], 404);
-
-        $student = $classroom->students()->find($student_id);
-        if (!$student) return response(["success" => false, "data" => null, "errorMessage" => "Student not found on classroom."], 404);
-
-        $classroom->students()->detach($student_id);
-
-        return response(["success" => true, "data" => 1, "errorMessage" => null]);
     }
 
     /**
@@ -168,5 +150,48 @@ class ClassroomController extends Controller
         if (!$classroom) return response(["success" => false, "data" => null, "errorMessage" => "Classroom not found."], 404);
 
         return response(["success" => true, "data" => 1, "errorMessage" => null]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @param  int  $student_id
+     * @return \Illuminate\Http\Response
+     */
+    public function removeStudent($id, $student_id)
+    {
+        $classroom =  Classroom::find($id);
+        if (!$classroom) return response(["success" => false, "data" => null, "errorMessage" => "Classroom not found."], 404);
+
+        $student = $classroom->students()->find($student_id);
+        if (!$student) return response(["success" => false, "data" => null, "errorMessage" => "Student not found on classroom."], 404);
+
+        $classroom->students()->detach($student_id);
+
+        return response(["success" => true, "data" => 1, "errorMessage" => null]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @param  int  $teacher_id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateTeacher($id, $teacher_id)
+    {
+        $classroom =  Classroom::find($id);
+        if (!$classroom) return response(["success" => false, "data" => null, "errorMessage" => "Classroom not found."], 404);
+
+        $teacher = Teacher::find($teacher_id);
+        if (!$teacher) return response(["success" => false, "data" => null, "errorMessage" => "Teacher not found."], 404);
+
+        $classroom->teacher()->dissociate($classroom->teacher->id);
+        $classroom->teacher()->associate($teacher->id);
+        $classroom->save();
+
+        // return response(["success" => true, "data" => 1, "errorMessage" => null]);
+        return response(["success" => true, "data" => $classroom, "errorMessage" => null]);
     }
 }
