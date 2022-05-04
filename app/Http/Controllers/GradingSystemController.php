@@ -64,7 +64,7 @@ class GradingSystemController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function grading_system_categories($id)
+    public function gradingSystemCategories($id)
     {
         $grading_system = GradingSystem::find($id);
         if (!$grading_system) return response(["success" => false, "data" => null, "errorMessage" => "Grading System not found."], 404);

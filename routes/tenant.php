@@ -63,7 +63,7 @@ Route::middleware([
     Route::resource("gs_categories", GradingSystemCategoryController::class);
 
     Route::resource("grading_systems", GradingSystemController::class);
-    Route::get('/grading_systems/{id}/gs_categories', [GradingSystemController::class, "grading_system_categories"]);
+    Route::get('/grading_systems/{id}/gs_categories', [GradingSystemController::class, "gradingSystemCategories"]);
     // TODO PUT /grading_systems/{id}/gs_categories
-    // TODO DELETE /grading_systems/{id}/gs_categories
+    // TODO DELETE /grading_systems/{id}/gs_categories/{gs_category_id}
 });
