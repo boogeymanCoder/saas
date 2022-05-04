@@ -144,8 +144,14 @@ class ClassroomController extends Controller
      */
     public function destroy($id)
     {
-        $classroom =  Classroom::destroy($id);
+        $classroom =  Classroom::find($id);
         if (!$classroom) return response(["success" => false, "data" => null, "errorMessage" => "Classroom not found."], 404);
+
+        try {
+            Classroom::destroy($id);
+        } catch (Exception $exception) {
+            return response(["success" => false, "data" => null, "errorMessage" => "Deletion failed, the Classroom is associated with a student/students"], 400);
+        }
 
         return response(["success" => true, "data" => 1, "errorMessage" => null]);
     }

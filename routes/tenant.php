@@ -59,6 +59,7 @@ Route::middleware([
     Route::delete('/classrooms/{id}/students/{student_id}', [ClassroomController::class, "removeStudent"]);
     Route::put('/classrooms/{id}/students/{student_id}', [ClassroomController::class, "addStudent"]);
     Route::put('/classrooms/{id}/teacher/{teacher_id}', [ClassroomController::class, "updateTeacher"]);
+    // TODO PUT /classrooms/{id}/subject/{subject_id}
 
     Route::resource("gs_categories", GradingSystemCategoryController::class);
 

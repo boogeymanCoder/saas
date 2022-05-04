@@ -118,8 +118,14 @@ class SubjectController extends Controller
      */
     public function destroy($id)
     {
-        $subject =  Subject::destroy($id);
+        $subject =  Subject::find($id);
         if (!$subject) return response(["success" => false, "data" => null, "errorMessage" => "Subject not found."], 404);
+
+        try {
+            Subject::destroy($id);
+        } catch (Exception $exception) {
+            return response(["success" => false, "data" => null, "errorMessage" => "Deletion failed, the Subject is associated with a class/classes"], 400);
+        }
 
         return response(["success" => true, "data" => 1, "errorMessage" => null]);
     }

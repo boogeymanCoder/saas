@@ -122,8 +122,14 @@ class TeacherController extends Controller
      */
     public function destroy($id)
     {
-        $teacher =  Teacher::destroy($id);
+        $teacher =  Teacher::find($id);
         if (!$teacher) return response(["success" => false, "data" => null, "errorMessage" => "Teacher not found."], 404);
+
+        try {
+            Teacher::destroy($id);
+        } catch (Exception $exception) {
+            return response(["success" => false, "data" => null, "errorMessage" => "Deletion failed, the Teacher is associated with a class/classes"], 400);
+        }
 
         return response(["success" => true, "data" => 1, "errorMessage" => null]);
     }
