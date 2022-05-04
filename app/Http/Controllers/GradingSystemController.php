@@ -108,6 +108,26 @@ class GradingSystemController extends Controller
     }
 
     /**
+     * Add the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function addGradingSystemCategory($id, $gs_category_id)
+    {
+        $grading_system =  GradingSystem::find($id);
+        if (!$grading_system) return response(["success" => false, "data" => null, "errorMessage" => "Grading System not found."], 404);
+
+        $grading_system_category =  GradingSystemCategory::find($gs_category_id);
+        if (!$grading_system_category) return response(["success" => false, "data" => null, "errorMessage" => "Grading System Category not found."], 404);
+
+        $grading_system_category->grading_system()->associate($grading_system);
+        $grading_system_category->save();
+
+        return response(["success" => true, "data" => $grading_system_category, "errorMessage" => null]);
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
