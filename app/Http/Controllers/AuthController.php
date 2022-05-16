@@ -27,13 +27,12 @@ class AuthController extends Controller
 
         $user_data = $request->only(["name", "email", "password"]);
         $user = User::create($user_data);
+        $token = $user->createToken(env("TOKEN_SECRET"))->plainTextToken;
 
         $domain = $request->get("domain");
-        $tenant = Tenant::create(['id' => $domain,]);
+        $tenant = Tenant::create(['id' => $domain, "user_id" => $user->id]);
         $tenant->domains()->create(['domain' => $domain . "." . env('HOSTNAME')]);
 
-        // $new_domain = $tenant->domains->with("tenant")->find();
-
-        return response(["success" => true, "data" => $tenant, "errorMessage" => null]);
+        return response(["success" => true, "data" => ["tenant" => $tenant, "user" => $user, "token" => $token], "errorMessage" => null]);
     }
 }
