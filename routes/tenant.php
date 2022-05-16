@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\ClassroomController;
-use App\Http\Controllers\GradingSystemCategoryController;
-use App\Http\Controllers\GradingSystemController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -60,11 +58,4 @@ Route::middleware([
     Route::put('/classrooms/{id}/students/{student_id}', [ClassroomController::class, "addStudent"]);
     Route::put('/classrooms/{id}/teacher/{teacher_id}', [ClassroomController::class, "updateTeacher"]);
     Route::put('/classrooms/{id}/subject/{subject_id}', [ClassroomController::class, "updateSubject"]);
-
-    Route::resource("gs_categories", GradingSystemCategoryController::class);
-
-    Route::resource("grading_systems", GradingSystemController::class);
-    Route::get('/grading_systems/{id}/gs_categories', [GradingSystemController::class, "gradingSystemCategories"]);
-    Route::delete('/grading_systems/{id}/gs_categories/{gs_category_id}', [GradingSystemController::class, "removeGradingSystemCategory"]);
-    Route::put('/grading_systems/{id}/gs_categories/{gs_category_id}', [GradingSystemController::class, "addGradingSystemCategory"]);
 });
