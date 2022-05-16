@@ -74,4 +74,37 @@ class AuthController extends Controller
 
         return response($response, 201);
     }
+
+    /**
+     * Get currently logged in user.
+     */
+    public function user(Request $request)
+    {
+        $user =  User::with(["tenant" => function ($query) {
+            $query->with('domains');
+        }])->find($request->user()->id);
+        return $user;
+    }
+
+    /**
+     * Logout a user and delete all of the users token.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function logout(Request $request)
+    {
+        $request
+            ->user()
+            ->tokens()
+            ->delete();
+
+        return response([
+            "success" => true,
+            "data" => [
+                "logged_out" => true
+            ],
+            "errorMessage" => null
+        ]);
+    }
 }
