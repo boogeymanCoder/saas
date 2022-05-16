@@ -3,8 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Classroom;
-use App\Models\GradingSystem;
-use App\Models\GradingSystemCategory;
 use App\Models\Student;
 use App\Models\Subject;
 use App\Models\Teacher;
@@ -34,8 +32,5 @@ class DatabaseSeeder extends Seeder
                 $students->random(30)->pluck('id')
             );
         });
-
-        GradingSystem::factory(100)->create();
-        GradingSystemCategory::factory(100)->create();
     }
 }
