@@ -10,4 +10,17 @@ use Stancl\Tenancy\Database\Concerns\HasDomains;
 class Tenant extends BaseTenant implements TenantWithDatabase
 {
     use HasDatabase, HasDomains;
+
+    public static function getCustomColumns(): array
+    {
+        return [
+            'id',
+            'user_id',
+        ];
+    }
+
+    function user()
+    {
+        return $this->hasOne(User::class);
+    }
 }
