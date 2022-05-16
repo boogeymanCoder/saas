@@ -42,7 +42,6 @@ class TeacherController extends Controller
                     "gender" => "required||string|in:Male,Female",
                     "number" => "required|string",
                     "email" => "required|string",
-                    "password" => "required|string|confirmed",
                 ]
             );
             return response(["success" => true, "data" => Teacher::create($request->all()), "errorMessage" => null], 201);
@@ -100,7 +99,6 @@ class TeacherController extends Controller
             $request->validate(
                 [
                     "gender" => "string|in:Male,Female",
-                    "password" => "string|confirmed"
                 ]
             );
 

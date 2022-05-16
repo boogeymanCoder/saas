@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string("gender");
             $table->string("number");
             $table->string("email")->unique();
-            $table->string("password");
             $table->timestamps();
         });
     }
