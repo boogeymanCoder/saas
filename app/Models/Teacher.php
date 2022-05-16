@@ -19,18 +19,8 @@ class Teacher extends Model
         "gender",
         "number",
         "email",
-        "password"
     ];
 
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-    ];
 
     public function classrooms()
     {
