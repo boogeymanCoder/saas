@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
+use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,10 +19,3 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/register', [AuthController::class, "register"]);
-Route::post('/login', [AuthController::class, "login"]);
-
-
-Route::group(["middleware" => ["auth:sanctum"]], function () {
-    Route::get('/user', [AuthController::class, "user"]);
-    Route::post('/logout', [AuthController::class, "logout"]);
-});

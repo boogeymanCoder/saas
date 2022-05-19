@@ -19,23 +19,24 @@ class AuthController extends Controller
     {
         $request->validate(
             [
-                "name" => "required|string|unique:users,name",
-                "email" => "required|string|unique:users,email",
+                "name" => "required|string",
+                "email" => "required|string",
                 "password" => "required|string|confirmed",
                 "domain" => "required|string|unique:domains,domain"
             ]
         );
+        $domain = $request->get("domain");
+        $tenant = Tenant::create(['id' => $domain]);
+        $tenant->domains()->create(['domain' => $domain . "." . env('HOSTNAME')]);
 
         $user_data = $request->only(["name", "email", "password"]);
         $user_data["password"] = bcrypt($user_data["password"]);
-        $user = User::create($user_data);
-        $token = $user->createToken(env("TOKEN_SECRET"))->plainTextToken;
 
-        $domain = $request->get("domain");
-        $tenant = Tenant::create(['id' => $domain, "user_id" => $user->id]);
-        $tenant->domains()->create(['domain' => $domain . "." . env('HOSTNAME')]);
+        $tenant->run(function () use ($user_data) {
+            User::create($user_data);
+        });
 
-        return response(["success" => true, "data" => ["tenant" => $tenant, "user" => $user, "token" => $token], "errorMessage" => null]);
+        return response(["success" => true, "data" => ["tenant" => $tenant,], "errorMessage" => null]);
     }
 
     /**
@@ -72,7 +73,7 @@ class AuthController extends Controller
             "errorMessage" => null
         ];
 
-        return response($response, 201);
+        return response($response);
     }
 
     /**
@@ -80,9 +81,7 @@ class AuthController extends Controller
      */
     public function user(Request $request)
     {
-        $user =  User::with(["tenant" => function ($query) {
-            $query->with('domains');
-        }])->find($request->user()->id);
+        $user =  $request->user();
         return $user;
     }
 
