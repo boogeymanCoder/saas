@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NameChanged;
+use App\Models\Classroom;
 use App\Models\Student;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -19,9 +22,12 @@ class StudentController extends Controller
     public function index()
     {
         return QueryBuilder::for(Student::class)
-            ->allowedFilters(['first_name', "middle_name", "last_name", "address", "birthday", AllowedFilter::exact('gender'), "number", 'email'])
+            ->allowedFilters([
+                'first_name', "middle_name", "last_name", "address", "birthday",  "full_name", "number", 'email',
+            ])
             ->defaultSort('first_name')
             ->allowedSorts(['first_name', "middle_name", "last_name", "address", "birthday", "number", 'email'])
+            ->withCount("classrooms")
             ->jsonPaginate();
     }
 
@@ -45,7 +51,10 @@ class StudentController extends Controller
                     "email" => "required|string",
                 ]
             );
-            return response(["success" => true, "data" => Student::create($request->all()), "errorMessage" => null], 201);
+
+            $student = Student::create($request->all());
+            NameChanged::dispatch($student);
+            return response(["success" => true, "data" => $student, "errorMessage" => null], 201);
         } catch (Exception $exception) {
             return response(["success" => false, "data" => null, "errorMessage" => $exception->getMessage()], 400);
         }
@@ -77,9 +86,14 @@ class StudentController extends Controller
     {
         $student = Student::find($id);
         $classrooms = QueryBuilder::for($student->classrooms())
-            ->allowedFilters(['name', "code"])
+            ->allowedFilters([
+                'name', "code",
+                AllowedFilter::exact('id'),
+            ])
             ->defaultSort('name')
             ->allowedSorts(['name', "code",])
+            ->with(["teacher", "subject"])
+            ->withCount('students')
             ->jsonPaginate();
 
         if (!$student) return response(["success" => false, "data" => null, "errorMessage" => "Student not found."], 404);
@@ -111,6 +125,7 @@ class StudentController extends Controller
             if (!$student) return response(["success" => false, "data" => null, "errorMessage" => "Student not found."], 404);
 
             $student->update($request->all());
+            NameChanged::dispatch($student);
             return response(["success" => true, "data" => $student, "errorMessage" => null]);
         } catch (Exception $exception) {
             return response(["success" => false, "data" => null, "errorMessage" => $exception->getMessage()], 400);

@@ -22,7 +22,7 @@ class AuthController extends Controller
                 "name" => "required|string",
                 "email" => "required|string",
                 "password" => "required|string|confirmed",
-                "domain" => "required|string|unique:domains,domain"
+                "domain" => "required|string|unique:tenants,id"
             ]
         );
         $domain = $request->get("domain");
@@ -37,6 +37,39 @@ class AuthController extends Controller
         });
 
         return response(["success" => true, "data" => ["tenant" => $tenant,], "errorMessage" => null]);
+    }
+
+    /**
+     * Update a tenant user.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request)
+    {
+        $fields = $request->validate(
+            [
+                "name" => "string",
+                "email" => "string",
+                "password" => "required|string",
+                "new_password" => "string|confirmed",
+            ]
+        );
+
+        $user = $request->user();
+
+        if (!$user || !Hash::check($fields["password"], $user->password)) {
+            return response(["success" => false, "data" => null, "errorMessage" => "Old password incorrect."]);
+        }
+
+        $data = $request->only(["name", "email"]);
+        if ($request->get("new_password")) {
+            $data["password"] = bcrypt($fields["new_password"]);
+        }
+
+        $user->update($data);
+
+        return response(["success" => true, "user" => $user, "errorMessage" => null]);
     }
 
     /**

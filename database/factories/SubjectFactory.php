@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Subject>
@@ -16,9 +17,12 @@ class SubjectFactory extends Factory
      */
     public function definition()
     {
+        $name = $this->faker->lastName();
+        $digit = $this->faker->unique()->randomNumber(4);
+
         return [
-            'name' => $this->faker->unique()->lastName(),
-            'code' => $this->faker->unique()->numberBetween(1000, 9999),
+            'name' => $name . "-" . $digit,
+            'code' => Str::random(10),
         ];
     }
 }
