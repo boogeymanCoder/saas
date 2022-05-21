@@ -23,7 +23,7 @@ class StudentController extends Controller
     {
         return QueryBuilder::for(Student::class)
             ->allowedFilters([
-                'first_name', "middle_name", "last_name", "address", "birthday",  "full_name", "number", 'email',
+                'first_name', "middle_name", "last_name", "address", "birthday",  "full_name", "number", 'email', AllowedFilter::exact('gender'),
             ])
             ->defaultSort('first_name')
             ->allowedSorts(['first_name', "middle_name", "last_name", "address", "birthday", "number", 'email'])
