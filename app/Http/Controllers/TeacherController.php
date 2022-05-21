@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NameChanged;
 use App\Models\Teacher;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -18,9 +20,13 @@ class TeacherController extends Controller
     public function index()
     {
         return QueryBuilder::for(Teacher::class)
-            ->allowedFilters(['first_name', "middle_name", "last_name", "address", "birthday", AllowedFilter::exact('gender'), "number", 'email'])
+            ->allowedFilters([
+                'first_name', "middle_name", "last_name", "address", "birthday", "full_name", AllowedFilter::exact('gender'), "number", 'email',
+                AllowedFilter::exact('id'),
+            ])
             ->defaultSort('first_name')
             ->allowedSorts(['first_name', "middle_name", "last_name", "address", "birthday", "number", 'email'])
+            ->withCount('classrooms')
             ->jsonPaginate();
     }
 
@@ -44,7 +50,10 @@ class TeacherController extends Controller
                     "email" => "required|string",
                 ]
             );
-            return response(["success" => true, "data" => Teacher::create($request->all()), "errorMessage" => null], 201);
+            $teacher = Teacher::create($request->all());
+            NameChanged::dispatch($teacher);
+
+            return response(["success" => true, "data" => $teacher, "errorMessage" => null], 201);
         } catch (Exception $exception) {
             return response(["success" => false, "data" => null, "errorMessage" => $exception->getMessage()], 400);
         }
@@ -80,6 +89,8 @@ class TeacherController extends Controller
             ->allowedFilters(['name', "code"])
             ->defaultSort('name')
             ->allowedSorts(['name', "code",])
+            ->with(["teacher", "subject"])
+            ->withCount('students')
             ->jsonPaginate();
 
 
@@ -106,6 +117,7 @@ class TeacherController extends Controller
             if (!$teacher) return response(["success" => false, "data" => null, "errorMessage" => "Teacher not found."], 404);
 
             $teacher->update($request->all());
+            NameChanged::dispatch($teacher);
             return response(["success" => true, "data" => $teacher, "errorMessage" => null]);
         } catch (Exception $exception) {
             return response(["success" => false, "data" => null, "errorMessage" => $exception->getMessage()], 400);

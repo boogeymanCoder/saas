@@ -18,9 +18,13 @@ class SubjectController extends Controller
     public function index()
     {
         return QueryBuilder::for(Subject::class)
-            ->allowedFilters(['name', "code"])
+            ->allowedFilters([
+                'name', "code",
+                AllowedFilter::exact('id'),
+            ])
             ->defaultSort('name')
             ->allowedSorts(['name', "code",])
+            ->withCount('classrooms')
             ->jsonPaginate();
     }
 
@@ -77,6 +81,8 @@ class SubjectController extends Controller
             ->allowedFilters(['name', "code"])
             ->defaultSort('name')
             ->allowedSorts(['name', "code",])
+            ->with(["teacher", "subject"])
+            ->withCount('students')
             ->jsonPaginate();
 
         return response($classrooms);

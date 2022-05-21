@@ -21,9 +21,16 @@ class ClassroomController extends Controller
     public function index()
     {
         return QueryBuilder::for(Classroom::class)
-            ->allowedFilters(['name', "code"])
+            ->allowedFilters([
+                'name', "code",
+                AllowedFilter::exact('teacher_id'),
+                AllowedFilter::exact('subject_id'),
+                AllowedFilter::exact('id'),
+            ])
             ->defaultSort('name')
             ->allowedSorts(['name', "code",])
+            ->with(["teacher", "subject"])
+            ->withCount('students')
             ->jsonPaginate();
     }
 
@@ -77,9 +84,12 @@ class ClassroomController extends Controller
         $classroom = Classroom::find($id);
         if (!$classroom) return response(["success" => false, "data" => null, "errorMessage" => "Classroom not found."], 404);
         $students = QueryBuilder::for($classroom->students())
-            ->allowedFilters(['first_name', "middle_name", "last_name", "address", "birthday", AllowedFilter::exact('gender'), "number", 'email'])
+            ->allowedFilters([
+                'first_name', "middle_name", "last_name", "address", "birthday", AllowedFilter::exact('gender'), "number", 'email', "full_name"
+            ])
             ->defaultSort('first_name')
             ->allowedSorts(['first_name', "middle_name", "last_name", "address", "birthday", "number", 'email'])
+            ->withCount("classrooms")
             ->jsonPaginate();
 
         foreach ($classroom->students as $student) {
@@ -102,6 +112,8 @@ class ClassroomController extends Controller
                 [
                     "name" => "string|unique:classrooms,name," . $id,
                     "code" => "string|unique:classrooms,code," . $id,
+                    "teacher_id" => "exists:teachers,id",
+                    "subject_id" => "exists:subjects,id",
                 ]
             );
 

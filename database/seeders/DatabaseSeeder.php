@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Events\NameChanged;
 use App\Models\Classroom;
 use App\Models\Student;
 use App\Models\Subject;
@@ -32,6 +33,13 @@ class DatabaseSeeder extends Seeder
             $classroom->students()->attach(
                 $students->random(30)->pluck('id')
             );
+        });
+
+        Teacher::all()->each(function ($teacher) {
+            NameChanged::dispatch($teacher);
+        });
+        Student::all()->each(function ($student) {
+            NameChanged::dispatch($student);
         });
     }
 }

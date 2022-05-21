@@ -46,6 +46,7 @@ Route::middleware([
     Route::group(["middleware" => ["auth:sanctum"]], function () {
         Route::get('/user', [AuthController::class, "user"]);
         Route::post('/logout', [AuthController::class, "logout"]);
+        Route::put('/update', [AuthController::class, "update"]);
 
         Route::resource("students", StudentController::class);
         Route::get('/students/{id}/classrooms', [StudentController::class, "classrooms"]);
