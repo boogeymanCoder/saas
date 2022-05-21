@@ -47,6 +47,7 @@ Route::middleware([
         Route::get('/user', [AuthController::class, "user"]);
         Route::post('/logout', [AuthController::class, "logout"]);
         Route::put('/update', [AuthController::class, "update"]);
+        Route::put('/settings', [AuthController::class, "setSettings"]);
 
         Route::resource("students", StudentController::class);
         Route::get('/students/{id}/classrooms', [StudentController::class, "classrooms"]);

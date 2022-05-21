@@ -109,6 +109,27 @@ class AuthController extends Controller
         return response($response);
     }
 
+
+    /**
+     * Update the settings of a tenant.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function setSettings(Request $request)
+    {
+        $fields = $request->validate(
+            [
+                "settings" => "required|json",
+            ]
+        );
+
+        $user = $request->user();
+
+        $user->update(["settings" => $fields["settings"]]);
+        return response(["success" => true, "data" => $user, "errorMessage" => null]);
+    }
+
     /**
      * Get currently logged in user.
      */
